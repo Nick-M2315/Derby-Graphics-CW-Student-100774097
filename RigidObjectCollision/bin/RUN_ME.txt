@@ -1,0 +1,95 @@
+================================================================================
+RIGID BODY DYNAMICS SIMULATION - RELEASE BUILD
+================================================================================
+
+HOW TO RUN THE APPLICATION
+===========================
+
+Simply double-click on:
+    run01.exe
+
+Or run from command line:
+    run01.exe
+
+CONTENTS OF THIS FOLDER
+=======================
+
+run01.exe                   - The main application executable (Release build, optimized)
+assimp-vc143-mt.dll        - ASSIMP library dependency for model loading
+
+shaders/                    - GLSL shader files (required for rendering)
+  - blinn.vert/frag        - Blinn-Phong lighting shader
+  - texblinn.vert/frag     - Textured Blinn-Phong shader
+  - colour.vert/frag       - Basic color shader
+  - flat.vert/frag         - Flat color shader
+  - phong.frag             - Phong lighting shader
+
+models/                     - 3D models and textures (required for scene)
+  - bunny_normal.obj/mtl   - Bunny model with normal map
+  - bunny-atlas.jpg        - Bunny texture
+  - teapot.obj             - Teapot model
+  - cube.obj               - Cube model
+  - carpet.png             - Carpet texture
+
+SYSTEM REQUIREMENTS
+===================
+
+- Windows operating system (Windows 10 or later)
+- OpenGL 3.3 or higher compatible graphics card
+- Visual C++ Runtime (usually already installed)
+- At least 100 MB free RAM
+- Display resolution: 800x800 or higher
+
+
+WHAT THIS PROGRAM DOES
+======================
+
+This is a 3D rigid body physics simulation that demonstrates:
+- Gravity effects on objects
+- Sphere-to-sphere collision detection and response
+- Sphere-to-plane collision handling
+- Realistic bouncing with elasticity control
+- Rotational dynamics (angular motion)
+- Interactive 3D visualization using OpenGL
+
+
+CONTROLS
+========
+
+(See the main README.txt file for detailed controls)
+
+Key features:
+- Play/Pause simulation
+- Add and remove rigid body objects
+- Adjust physics parameters
+- Interactive camera control
+
+
+TROUBLESHOOTING
+===============
+
+If the application won't start:
+1. Ensure all files in this folder are not deleted or moved
+2. Verify the GPU supports OpenGL 3.3+
+3. Update graphics drivers to the latest version
+4. Ensure assimp-vc143-mt.dll is in the same folder as run01.exe
+
+If you see shader errors:
+- Make sure the shaders/ folder is present and contains all .vert and .frag files
+
+If models don't appear:
+- Ensure the models/ folder is present with all .obj files
+
+
+BUILD INFORMATION
+=================
+
+This is a Release build optimized for performance.
+Build type: x64 Release (64-bit optimized executable)
+Build date: May 24, 2026
+Built with: Visual Studio 2022, CMake, and OpenGL
+
+For source code and more information, see the parent directory README.txt
+
+
+================================================================================

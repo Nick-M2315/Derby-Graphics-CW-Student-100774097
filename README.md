@@ -4,7 +4,7 @@ This repository contains three sophisticated 3D graphics and simulation programs
 
 ---
 
-## ?? Project Overview
+##  Project Overview
 
 ### 1. **Ray Tracing Renderer** (`projB05_3_final_scene`)
 
@@ -93,7 +93,7 @@ A full-featured 3D physics simulation system that accurately models rigid body m
 - `RigidSim`: Main simulation engine orchestrating physics updates and collision handling
 
 **Configurable Parameters:**
-- **GRAVITY**: Global gravitational acceleration (default: -19.6133 m/s² downward)
+- **GRAVITY**: Global gravitational acceleration (default: -19.6133 m/s  downward)
 - **LINEAR_DAMPING**: Velocity reduction per frame (0.0-1.0 scale)
 - **ANGULAR_DAMPING**: Rotational damping
 - **Elasticity**: Collision bounce properties
@@ -108,7 +108,7 @@ A full-featured 3D physics simulation system that accurately models rigid body m
 
 ---
 
-## ??? Common Build Instructions
+##  Common Build Instructions
 
 All three projects use CMake for building:
 
@@ -144,39 +144,39 @@ All three projects use CMake for building:
 
 ---
 
-## ?? Directory Structure
+##  Directory Structure
 
 ```
-??? projB05_3_final_scene/          # Ray Tracing Renderer
-?   ??? src/                        # Source files
-?   ??? README.txt                  # Project-specific documentation
-?   ??? external/glfw/              # GLFW library
-?
-??? projB06_5_animate/              # Skeletal Animation Viewer
-?   ??? src/                        # Source files
-?   ??? bin/
-?   ?   ??? models/                 # 3D model files (.dae)
-?   ?   ??? shaders/                # GLSL shader files
-?   ?   ??? run01.exe               # Executable
-?   ??? README.txt                  # Project-specific documentation
-?   ??? external/
-?   ?   ??? glfw/                   # GLFW library
-?   ?   ??? assimp/                 # Assimp library
-?   ??? include/                    # GLM and header files
-?
-??? projB09_2_rigid_simulation/     # Rigid Body Dynamics Simulator
-?   ??? src/                        # Source files
-?   ??? bin/                        # Binary and asset directory
-?   ??? README.txt                  # Project-specific documentation
-?   ??? external/                   # External libraries
-?   ??? include/                    # Header files
-?
-??? README.md                        # This unified documentation
+ projB05_3_final_scene/          # Ray Tracing Renderer
+    src/                        # Source files
+    README.txt                  # Project-specific documentation
+    external/glfw/              # GLFW library
+
+ projB06_5_animate/              # Skeletal Animation Viewer
+    src/                        # Source files
+    bin/
+       models/                 # 3D model files (.dae)
+       shaders/                # GLSL shader files
+       run01.exe               # Executable
+    README.txt                  # Project-specific documentation
+    external/
+       glfw/                   # GLFW library
+       assimp/                 # Assimp library
+    include/                    # GLM and header files
+
+ projB09_2_rigid_simulation/     # Rigid Body Dynamics Simulator
+    src/                        # Source files
+    bin/                        # Binary and asset directory
+    README.txt                  # Project-specific documentation
+    external/                   # External libraries
+    include/                    # Header files
+
+ README.md                        # This unified documentation
 ```
 
 ---
 
-## ?? Use Cases
+##  Use Cases
 
 - **Ray Tracing Renderer**: Educational project in computer graphics, photorealistic image generation, demonstration of rendering algorithms
 - **Animation Viewer**: Game engine pipeline testing, character animation preview, skeletal system visualization
@@ -184,7 +184,7 @@ All three projects use CMake for building:
 
 ---
 
-## ?? Technical Highlights
+##  Technical Highlights
 
 | Feature | Ray Tracing | Animation | Physics |
 |---------|------------|-----------|---------|
@@ -197,7 +197,7 @@ All three projects use CMake for building:
 
 ---
 
-## ?? Notes
+##  Notes
 
 - Each project directory contains individual README files with detailed, project-specific information
 - All projects are built with modern C++ standards and emphasize efficient algorithms
@@ -206,7 +206,7 @@ All three projects use CMake for building:
 
 ---
 
-## ?? Getting Started
+##  Getting Started
 
 1. Choose a project from the three available
 2. Read the individual project README.txt for specific details

@@ -1,0 +1,274 @@
+================================================================================
+                    BUILD AND DISTRIBUTION SETUP GUIDE
+                    Ray Tracing Renderer - RAYTRACER
+================================================================================
+
+OVERVIEW
+--------
+This guide explains how to create a proper distribution package with:
+  - bin/ folder containing Release build executable
+  - All necessary support files (run.bat, output directory)
+  - Structured for easy distribution and execution
+
+
+QUICK START - BUILD FOR DISTRIBUTION
+-------------------------------------
+
+Option 1: Using build_release.bat (Recommended - Windows)
+  1. Double-click build_release.bat in the project root
+  2. CMake will configure and build Release version
+  3. Executable will be placed in bin/ray05.exe
+  4. run.bat will be automatically copied to bin/ folder
+  5. Output directory will be created at bin/out/Render Outputs/
+
+Option 2: Manual CMake Build (Windows Command Line)
+  1. Open Command Prompt in project root
+  2. Run: mkdir build_release && cd build_release
+  3. Configure: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
+  4. Build: cmake --build . --config Release
+  5. Output: bin/ray05.exe
+
+
+PROJECT STRUCTURE AFTER BUILD
+------------------------------
+projB05_3_final_scene/
+??? src/                          # Source code (header files + main.cpp)
+??? bin/                          # Distribution folder (CREATED BY BUILD)
+?   ??? ray05.exe                # Release executable (optimized)
+?   ??? run.bat                  # PPM viewer launcher
+?   ??? out/                     # Output directory created at build time
+?       ??? Render Outputs/      # Where renders are saved
+??? CMakeLists.txt               # Updated for bin/ output
+??? build_release.bat            # Build helper script
+??? BUILD_INSTRUCTIONS.txt       # This file
+??? readme.txt                   # Updated with bin/ instructions
+
+
+STANDALONE EXECUTABLE IN BIN/
+------------------------------
+
+The bin/ folder is designed to be a standalone distribution unit:
+
+1. Self-contained:
+   - ray05.exe: fully statically-linked executable
+   - run.bat: opens PPM viewer in browser
+   - out/Render Outputs/: output directory for renders
+
+2. To distribute:
+   - Copy entire bin/ folder to distribution media
+   - Recipient can run bin/ray05.exe directly
+   - No build process needed on recipient's machine
+   - All files stay within bin/ folder hierarchy
+
+3. First-time execution:
+   - ray05.exe creates out/Render Outputs/ if it doesn't exist
+   - Renders output.ppm and output.png to this directory
+   - run.bat can be used to view .ppm files in browser
+
+
+ABOUT THE BUILD CONFIGURATION
+------------------------------
+
+Release Build Optimizations:
+  - /O2: Full optimization for speed
+  - /arch:AVX2: AVX2 SIMD vector instructions
+  - Results in 50-100x faster execution than Debug builds
+
+OpenMP Multi-threading:
+  - Automatically enabled for Release build
+  - Uses all available CPU cores
+  - Tile-based rendering for efficient parallelization
+
+Output Location:
+  - CMakeLists.txt directs all executables to bin/ folder
+  - Works via CMAKE_SOURCE_DIR (always project root)
+  - Post-build: run.bat copied, directories created
+
+Why bin/ folder:
+  - Standard practice for distribution
+  - Clean separation: src/ = source, bin/ = executable
+  - Easy to package entire bin/ for distribution
+  - Keeps project root clean
+
+
+RUNTIME BEHAVIOR
+----------------
+
+When you run bin/ray05.exe:
+
+1. Creates output directories:
+   - bin/out/Render Outputs/ (if not present)
+
+2. Renders image to PPM format:
+   - bin/out/Render Outputs/render_output.ppm
+
+3. Converts PPM to PNG:
+   - bin/out/Render Outputs/render_output.png
+
+4. Attempts to open PNG in default viewer
+
+To view PPM directly in browser:
+  1. Run bin/run.bat
+  2. Browser opens to web-based PPM viewer
+  3. Click "Choose File" and select the .ppm file
+  4. Rendered image displays in browser
+
+
+CUSTOMIZATION BEFORE DISTRIBUTION
+-----------------------------------
+
+To modify rendering parameters before distributing:
+
+1. Edit src/main.cpp, line where final_scene() is called
+2. Modify these parameters:
+   - image_width: resolution (512 = default)
+   - samples_per_pixel: quality (500 = default)
+   - max_depth: ray bounces (10 = default)
+
+3. Examples for different use cases:
+
+   For quick demo (2-3 seconds):
+     final_scene(256, 100, 4);
+
+   For product quality (5-10 minutes):
+     final_scene(512, 500, 10);
+
+   For high quality (15-20 minutes):
+     final_scene(512, 1000, 40);
+
+4. Rebuild using:
+   - build_release.bat (easiest)
+   - Or manual CMake commands above
+   - New executable in bin/ reflects your changes
+
+
+DISTRIBUTION CHECKLIST
+----------------------
+
+Before distributing, verify:
+
+[ ] Build completes without errors using build_release.bat
+[ ] bin/ray05.exe exists and runs successfully
+[ ] bin/ray05.exe creates bin/out/Render Outputs/
+[ ] render_output.ppm is created after rendering
+[ ] render_output.png is created automatically
+[ ] bin/run.bat opens PPM viewer in browser
+[ ] bin/run.bat can load and display .ppm files
+[ ] No errors appear in console output
+
+Optional additional steps:
+
+[ ] Copy readme.txt to bin/readme.txt (for recipients)
+[ ] Copy src/ folder if source distribution is needed
+[ ] Create .zip with bin/ folder for distribution
+[ ] Test extracted .zip on clean system
+[ ] Document any system requirements (CPU features, RAM)
+
+
+SYSTEM REQUIREMENTS FOR RECIPIENTS
+-----------------------------------
+
+Minimum Requirements:
+  - Windows 7 SP1 or later (for ShellExecute)
+  - 4 GB RAM minimum
+  - CPU supporting AVX2 (Intel Haswell+ or AMD Steamroller+)
+    * For older CPUs, rebuild without /arch:AVX2
+
+Recommended:
+  - Windows 10 or later
+  - 8+ GB RAM
+  - Modern multi-core CPU
+  - SSD for faster file I/O
+
+Optional:
+  - Modern web browser (for run.bat PPM viewer)
+  - Default image viewer for PNG files
+
+
+TROUBLESHOOTING BUILD
+---------------------
+
+CMake configuration fails:
+  1. Verify CMake 3.26.0+ installed: cmake --version
+  2. Verify Ninja installed: ninja --version
+  3. Verify Visual Studio build tools: search "Visual Studio" in Windows
+  4. Run: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+Build fails with OpenMP error:
+  1. Install Visual Studio with C++ workload + OpenMP support
+  2. Or install Intel MKL for OpenMP
+  3. Check Visual Studio Installer for "OpenMP support"
+
+Executable not created in bin/:
+  1. Check build_release/ directory for build output
+  2. Verify bin/ folder was created
+  3. Check for build errors above
+  4. Try deleting build_release/ and rebuilding
+
+AVX2 instruction not supported:
+  1. Run on older CPU (pre-2013 Intel, pre-2014 AMD)
+  2. Rebuild without AVX2:
+     - Edit CMakeLists.txt line 13
+     - Remove " /arch:AVX2" from CMAKE_CXX_FLAGS_RELEASE
+     - Rebuild using build_release.bat
+
+
+TROUBLESHOOTING RUNTIME
+-----------------------
+
+Executable crashes:
+  1. Check Windows error message
+  2. Verify output directory permissions
+  3. Try running from Command Prompt to see error output
+  4. Reduce render resolution (try 256 instead of 512)
+
+Output files not created:
+  1. Check bin/out/Render Outputs/ directory exists
+  2. Verify write permissions on bin/ folder
+  3. Check disk space (512x512@500spp = ~4MB PPM + 0.5MB PNG)
+  4. Look for error messages in console
+
+PNG conversion fails:
+  1. Verify PPM file was created successfully
+  2. Check disk space
+  3. Verify bin/out/Render Outputs/ is writable
+
+Image doesn't open automatically:
+  1. This is Windows-specific via ShellExecute
+  2. Works on Windows Vista and later
+  3. PNG file is still created even if open fails
+  4. Run bin/run.bat to view in browser
+
+
+PERFORMANCE TUNING
+------------------
+
+For different hardware:
+
+High-end system (8+ cores, 16+ GB RAM):
+  - Increase resolution: 1024x1024
+  - Increase samples: 1000+
+  - Increase depth: 20+
+
+Mid-range system (4-6 cores, 8+ GB RAM):
+  - Keep default: 512x512, 500 samples, 10 depth
+  - Or: 512x512, 250 samples, 5 depth for faster
+
+Low-end system (2 cores, 4 GB RAM):
+  - Reduce resolution: 256x256
+  - Reduce samples: 100-200
+  - Reduce depth: 4-5
+
+
+NEXT STEPS
+----------
+
+1. Run build_release.bat to create bin/ folder
+2. Test bin/ray05.exe to verify it works
+3. Test bin/run.bat for browser PPM viewer
+4. Customize render parameters if needed
+5. Distribute entire bin/ folder to others
+
+For further information, see readme.txt in bin/ folder or project root.
+
+================================================================================

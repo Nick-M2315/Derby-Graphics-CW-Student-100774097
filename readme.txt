@@ -108,40 +108,76 @@ HOW TO RUN
 ----------
 
 Prerequisites:
-  - CMake 3.26.0 or higher
-  - C++17 compiler (MSVC or compatible)
-  - OpenMP library (for multi-threading)
-  - Windows environment (uses ShellExecute API for opening output image)
+  - Windows 7 SP1 or later (for already-built executable)
+  - 4 GB RAM minimum
+  - CPU supporting AVX2 instructions (Intel Haswell+ or AMD Steamroller+)
+  - For building: CMake 3.26.0+, C++17 compiler, OpenMP, Visual Studio build tools
 
-Build Instructions:
-  1. Navigate to project root directory
-  2. Create build directory: mkdir build && cd build
-  3. Configure with CMake: cmake .. -G Ninja
-  4. Build: cmake --build . --config Release
-  5. Run executable: ../out/build/x64-Debug/ray05.exe
+Running the Pre-Built Executable (Easiest):
+  1. Navigate to: bin/ folder
+  2. Double-click: bin/ray05.exe
+  3. Wait for rendering to complete (1-10 minutes depending on settings)
+  4. View results:
+     - PNG opens automatically in default image viewer
+     - Or view at: bin/out/Render Outputs/render_output.png
+  5. Optional: View PPM in browser by double-clicking bin/run.bat
 
-Output:
-  - PPM file: out/Render Outputs/render_output.ppm
-  - PNG file: out/Render Outputs/render_output.png (auto-converts from PPM)
+Running from Command Line:
+  1. Open Command Prompt
+  2. Navigate to project root: cd C:\path\to\projB05_3_final_scene
+  3. Run directly: bin\ray05.exe
+  4. Or with relative path from bin: cd bin && ray05.exe
+
+Running After Building with build_release.bat:
+  Quick Start (Recommended):
+    1. Double-click build_release.bat in project root
+    2. Wait for build to complete (~30 seconds)
+    3. Run: bin/ray05.exe
+    4. Rendered images appear in: bin/out/Render Outputs/
+
+  Manual Build Instructions:
+    1. Navigate to project root directory
+    2. Create build directory: mkdir build_release && cd build_release
+    3. Configure with CMake: cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
+    4. Build: cmake --build . --config Release
+    5. Run executable: ..\bin\ray05.exe
+
+Output Files:
+  Location: bin/out/Render Outputs/
+  - render_output.ppm: PPM format image (raw, larger file)
+  - render_output.png: PNG format image (compressed, auto-converted from PPM)
   - Image automatically opens in default viewer on Windows
+  - If not, manually open render_output.png from the Render Outputs folder
 
-Console Output:
-  - Progress and timing information logged to console
-  - Also saved to .ppm file during rendering
+Console Output During Rendering:
+  - Real-time progress information
+  - Timing for rendering stages
+  - File paths where output is saved
+  - Completion notification
 
-Viewing PPM Output in Browser:
-  The project includes a run.bat file that opens a PPM viewer in your browser:
+Viewing PPM Output in Web Browser:
+  The bin/ folder includes a run.bat file for viewing PPM in a web-based viewer:
 
-  1. After rendering completes and output files are generated
-  2. Double-click run.bat in the project root directory
-  3. Your default browser opens to a web-based PPM viewer
-  4. Click "Choose File" and navigate to out/Render Outputs/render_output.ppm
+  1. After rendering completes and output files are generated in bin/out/Render Outputs/
+  2. Option A - Direct: Double-click bin/run.bat
+  3. Option B - Manual: Open browser and navigate to https://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html
+  4. Click "Choose File" and navigate to bin/out/Render Outputs/render_output.ppm
   5. The PPM image displays in the browser for viewing and analysis
 
   This is useful for:
     - Quick preview without installing image viewers
     - Comparing render quality without conversion
     - Viewing on different systems via file sharing
+    - Analyzing image details at full resolution
+
+About the bin/ Folder:
+  - bin/ is the main distribution folder containing all executable files
+  - Location: projB05_3_final_scene/bin/ (next to src/ folder)
+  - Self-contained package: ray05.exe, run.bat, and output directory
+  - Can be packaged and distributed to other systems
+  - All files stay within bin/ hierarchy for portability
+  - No external dependencies - everything included
+  - See BUILD_INSTRUCTIONS.txt for detailed setup and distribution guide
 
 
 CUSTOMIZATION GUIDE
@@ -258,28 +294,36 @@ PERFORMANCE OPTIMIZATION TIPS
 FILE STRUCTURE
 --------------
 projB05_3_final_scene/
-??? CMakeLists.txt           - Build configuration
+??? CMakeLists.txt               - Build configuration (outputs to bin/)
+??? build_release.bat            - Quick build script (creates bin/ folder)
+??? BUILD_INSTRUCTIONS.txt       - Detailed build and distribution guide
+??? readme.txt                   - This file
+??? run.bat                      - PPM browser viewer launcher
 ??? src/
-?   ??? main.cpp            - Entry point and scene definition
-?   ??? camera.h            - Camera and rendering orchestration
-?   ??? ray.h               - Ray primitive
-?   ??? vec3.h              - 3D vector math
-?   ??? color.h             - Color handling
-?   ??? hittable.h          - Renderable object interface
-?   ??? hittable_list.h     - Object container
-?   ??? sphere.h            - Sphere geometry
-?   ??? quad.h              - Quadrilateral geometry
-?   ??? material.h          - Material definitions (lambertian, metal, etc.)
-?   ??? texture.h           - Texture definitions
-?   ??? bvh.h               - Acceleration structure
-?   ??? aabb.h              - Bounding box
-?   ??? constant_medium.h   - Volumetric scattering
-?   ??? tile_renderer.h     - Tile-based parallel rendering
-?   ??? png_converter.h     - PNG output writer
-?   ??? image_utils.h       - Image conversion and viewing
-?   ??? rtweekend.h         - Common utilities and includes
-??? out/
-?   ??? Render Outputs/     - Generated output location
+?   ??? main.cpp                - Entry point and scene definition
+?   ??? camera.h                - Camera and rendering orchestration
+?   ??? ray.h                   - Ray primitive
+?   ??? vec3.h                  - 3D vector math
+?   ??? color.h                 - Color handling
+?   ??? hittable.h              - Renderable object interface
+?   ??? hittable_list.h         - Object container
+?   ??? sphere.h                - Sphere geometry
+?   ??? quad.h                  - Quadrilateral geometry
+?   ??? material.h              - Material definitions (lambertian, metal, etc.)
+?   ??? texture.h               - Texture definitions
+?   ??? bvh.h                   - Acceleration structure
+?   ??? aabb.h                  - Bounding box
+?   ??? constant_medium.h       - Volumetric scattering
+?   ??? tile_renderer.h         - Tile-based parallel rendering
+?   ??? png_converter.h         - PNG output writer
+?   ??? image_utils.h           - Image conversion and viewing
+?   ??? rtweekend.h             - Common utilities and includes
+??? bin/                         - Distribution folder (created by build)
+?   ??? ray05.exe               - Release executable (optimized)
+?   ??? run.bat                 - PPM viewer launcher (copied from root)
+?   ??? out/
+?       ??? Render Outputs/     - Output directory for renders
+??? build_release/              - Build directory (created by build_release.bat)
 ??? CMake build files
 
 

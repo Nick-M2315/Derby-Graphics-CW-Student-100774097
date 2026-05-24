@@ -5,6 +5,7 @@
 #include <omp.h>
 #include "hittable.h"
 #include "material.h" // <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#include "tile_renderer.h"
 
 class camera {
 private:
@@ -229,6 +230,87 @@ public:
         }
 
         std::clog << "\r[||||||||||||||||||||||||||||||||||||||||] 100% (" << image_height << "/" << image_height << ")\n";
+
+        // Build output buffer from pixel data
+        std::string pixel_buffer;
+        pixel_buffer.reserve(image_height * image_width * 12);
+
+        pixel_buffer += "P3\n";
+        pixel_buffer += std::to_string(image_width) + " " + std::to_string(image_height) + "\n255\n";
+
+        for (int j = 0; j < image_height; j++) {
+            for (int i = 0; i < image_width; i++) {
+                auto r = pixel_data[j][i].x();
+                auto g = pixel_data[j][i].y();
+                auto b = pixel_data[j][i].z();
+
+                static const interval intensity(0.000, 0.999);
+                int rbyte = int(256 * intensity.clamp(r));
+                int gbyte = int(256 * intensity.clamp(g));
+                int bbyte = int(256 * intensity.clamp(b));
+
+                pixel_buffer += std::to_string(rbyte) + " " + std::to_string(gbyte) + " " + std::to_string(bbyte) + "\n";
+            }
+        }
+
+        // Write all buffered data to stdout at once
+        std::cout << pixel_buffer;
+    }
+
+    // Tiled rendering for improved memory locality and performance
+    void render_tiled(const hittable& world, int tile_size = 32) {
+        initialize();
+
+
+
+        // Create a 2D buffer for all pixel data
+        std::vector<std::vector<vec3>> pixel_data(image_height, std::vector<vec3>(image_width));
+
+        // Create tile renderer
+        TileRenderer tile_renderer(image_width, image_height, tile_size);
+        const auto& tiles = tile_renderer.get_all_tiles();
+        int total_tiles = tile_renderer.get_tile_count();
+
+        std::clog << "Tiled Rendering: " << total_tiles << " tiles of size " << tile_size << "x" << tile_size << "\n";
+
+        // Process tiles in parallel with dynamic scheduling
+        #pragma omp parallel for schedule(dynamic) 
+        for (int tile_idx = 0; tile_idx < total_tiles; tile_idx++) {
+            const Tile& tile = tiles[tile_idx];
+
+            // Render pixels within this tile
+            for (int j = tile.y_start; j < tile.y_end; j++) {
+                for (int i = tile.x_start; i < tile.x_end; i++) {
+                    color pixel_color(0, 0, 0);
+                    for (int sample = 0; sample < samples_per_pixel; sample++) {
+                        ray r = get_ray(i, j);
+                        pixel_color += trace_ray(r, world);
+                    }
+                    pixel_data[j][i] = pixel_color * pixel_samples_scale;
+                }
+            }
+
+            // Progress update (thread-safe)
+            #pragma omp critical
+            {
+                static int tiles_completed = 0;
+                tiles_completed++;
+                double progress = double(tiles_completed) / total_tiles;
+                int bar_width = 40;
+                int filled = int(progress * bar_width);
+
+                std::string bar = "[";
+                for (int k = 0; k < bar_width; k++) {
+                    bar += (k < filled) ? "|" : "_";
+                }
+                bar += "]";
+
+                int percent = int(progress * 100);
+                std::clog << "\r" << bar << " " << percent << "% (" << tiles_completed << "/" << total_tiles << " tiles) " << std::flush;
+            }
+        }
+
+        std::clog << "\r[||||||||||||||||||||||||||||||||||||||||] 100% (" << total_tiles << "/" << total_tiles << " tiles)\n";
 
         // Build output buffer from pixel data
         std::string pixel_buffer;

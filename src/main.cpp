@@ -60,7 +60,7 @@ void final_scene(int image_width, int samples_per_pixel, int max_depth) {
 
     auto center1 = point3(400, 400, 200);
     auto center2 = center1 + vec3(30, 0, 0);
-    auto sphere_material = make_shared<lambertian>(color(0.7, 0.3, 0.1));
+    auto sphere_material = make_shared<lambertian>(color(0.3, 0.8, 0.1));
     //world.add(make_shared<sphere>(center1, center2, 50, sphere_material));
     world.add(make_shared<sphere>(center1, 50, sphere_material));
 
@@ -69,9 +69,9 @@ void final_scene(int image_width, int samples_per_pixel, int max_depth) {
 
     auto boundary = make_shared<sphere>(point3(360, 150, 145), 70, make_shared<dielectric>(1.5));
     world.add(boundary);
-    world.add(make_shared<constant_medium>(boundary, 0.2, color(0.2, 0.4, 0.9)));
+    world.add(make_shared<constant_medium>(boundary, 0.1, color(0.2, 0.4, 0.9)));
     boundary = make_shared<sphere>(point3(0, 0, 0), 5000, make_shared<dielectric>(1.5));
-    world.add(make_shared<constant_medium>(boundary, .0001, color(1, 1, 1)));
+    world.add(make_shared<constant_medium>(boundary, .0002, color(1, 1, 1)));
 
     /*
     auto emat = make_shared<lambertian>(make_shared<image_texture>("earthmap.jpg"));
@@ -84,7 +84,7 @@ void final_scene(int image_width, int samples_per_pixel, int max_depth) {
     world.add(make_shared<sphere>(point3(300, 250, 400), 100, make_shared<lambertian>(checker)));
 
     auto fog = make_shared<sphere>(point3(220, 280, 300), 80, white);
-    world.add(make_shared<constant_medium>(fog, 0.004, color(1, 1, 1)));
+    world.add(make_shared<constant_medium>(fog, 0.014, color(1.5, 1, 1)));
 
     hittable_list boxes2;
     int ns = 1000;
@@ -113,7 +113,8 @@ void final_scene(int image_width, int samples_per_pixel, int max_depth) {
     // Set camera exposure
     cam.exposure = 0.2;  // 1.0 = normal, < 1.0 = less sensitive (darker), > 1.0 = more sensitive (brighter)
 
-    cam.render(world);
+    // Use tiled rendering for better performance
+    cam.render_tiled(world, 32);
 }
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -130,11 +131,11 @@ int main() {
 
     std::clog << "Starting render... Output will be saved to " << ppm_file << "\n";
 
-    final_scene(200, 250, 4); // ~2 min
-    //final_scene(400, 250, 40); // ~4 min
-    //final_scene(400, 1000, 40);  // ~15 min
-    //final_scene(400, 4000, 40);  // ~15 min
-    //final_scene(800, 10000, 40);
+    final_scene(256, 100, 4); // ~20 sec - good for debug quick re-renders
+    //final_scene(512, 100, 4); // ~1 min - basic quality render
+    //final_scene(512, 500, 10);  // ~7 min - improved render quality
+    //final_scene(512, 1000, 40);  // ~15 min - reference render quality
+    //final_scene(2048, 2000, 40); // - OVERKILL
 
     std::clog << "\nRender complete! Image saved to " << ppm_file << "\n";
 
